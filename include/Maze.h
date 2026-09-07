@@ -25,6 +25,7 @@ public:
     Maze(int rows, int cols);
 
     int getRows() const;
+    int getCols() const;
     int getcolsO() const;
 
     CellType getCell(int row,int col) const;
@@ -37,6 +38,7 @@ public:
     Point getEnd() const;
 
     void setStart(Point point);
+    void setEnd(Point point);
     void seteEnd(Point point);
 
     void clearPath();
