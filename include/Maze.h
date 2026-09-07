@@ -26,7 +26,6 @@ public:
 
     int getRows() const;
     int getCols() const;
-    int getcolsO() const;
 
     CellType getCell(int row,int col) const;
     void setCell(int row,int col,CellType type);
@@ -39,7 +38,6 @@ public:
 
     void setStart(Point point);
     void setEnd(Point point);
-    void seteEnd(Point point);
 
     void clearPath();
 };//用于保存二维迷宫
