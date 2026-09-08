@@ -40,4 +40,5 @@ public:
     void setEnd(Point point);
 
     void clearPath();
+    void print() const;
 };//用于保存二维迷宫
