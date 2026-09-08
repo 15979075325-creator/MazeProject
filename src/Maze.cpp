@@ -1,4 +1,5 @@
 #include "../include/Maze.h"
+#include <iostream>
 
 Maze::Maze(int rows,int cols)
     :rows(rows),
@@ -83,6 +84,32 @@ Maze::Maze(int rows,int cols)
         grid[start.row][start.col] = CellType::Start;
         grid[end.row][end.col] = CellType::End;
     }
-
+    void Maze::print() const{
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                switch(grid[i][j]){
+                    case CellType::Wall:
+                        std::cout << "##";
+                        break;
+                    case CellType::Road:
+                        std::cout << "  ";
+                        break;
+                    case CellType::Start:
+                        std::cout << "ST";
+                        break;
+                    case CellType::End:
+                        std::cout << "ED";
+                        break;
+                    case CellType::Path:
+                        std::cout << "..";
+                        break;
+                    case CellType::Visited:
+                        std::cout << "++";
+                        break;
+                }
+            }
+            std::cout << '\n';
+        }
+    }
     
 
