@@ -18,7 +18,7 @@
 // ============================================================
 
 #include "solver/Solver.h"
-
+#include <functional>
 #include <algorithm>   // std::reverse
 #include <climits>     // INT_MAX
 #include <queue>       // std::queue / std::priority_queue
