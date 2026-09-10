@@ -20,18 +20,6 @@
 #include <algorithm>
 #include <stdexcept>
 #include <vector>
-
-// 局部随机源：用"当前时间 ^ 设备随机数"做种子，保证每次启动都不一样
-// （注意：某些 MinGW 下 random_device 每次都返回相同值，必须掺入时间）
-static std::mt19937& rng() {
-    using namespace std::chrono;
-    auto seed = static_cast<unsigned>(
-        high_resolution_clock::now().time_since_epoch().count()) ^
-        std::random_device{}();
-    static std::mt19937 e{seed};
-    return e;
-}
-
 // 构造函数
 DfsGenerator::DfsGenerator(unsigned w, unsigned h)
     : _grid(), _w(w), _h(h) {
