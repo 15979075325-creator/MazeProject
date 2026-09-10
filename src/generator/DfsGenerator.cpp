@@ -15,11 +15,10 @@
 // ============================================================
 
 #include "generator/DfsGenerator.h"
+#include "core/Utils.h"
 
-#include <algorithm>    // std::shuffle
-#include <chrono>       // std::chrono (做随机种子)
-#include <random>       // std::random_device / std::mt19937
-#include <stdexcept>    // std::invalid_argument
+#include <algorithm>
+#include <stdexcept>
 #include <vector>
 
 // 局部随机源：用"当前时间 ^ 设备随机数"做种子，保证每次启动都不一样
