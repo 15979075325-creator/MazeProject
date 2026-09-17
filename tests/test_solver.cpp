@@ -1,77 +1,140 @@
-// ============================================================
-// test_solver.cpp —— 求解器单元测试（成员B · 第2周）
-// ------------------------------------------------------------
-// 怎么跑：
-//   g++ -std=c++17 -I include -o test_solver.exe
-//       tests/test_solver.cpp src/solver/Solver.cpp
-//   .\test_solver.exe   （全部通过会打印 ALL TESTS PASSED）
-//
-// 本文件要测什么（用手工搭的小 Grid，不依赖生成器）：
-//   用例1 直线    ：一行通路，S 左端 E 右端 → 路径长度 == 格子数
-//   用例2 折线    ：需要拐弯的 L 形通路 → 长度与 BFS/Dijkstra 一致
-//   用例3 无解    ：S 与 E 被一整列墙隔开 → 两算法都返回空
-//   附加断言      ：bfsFind 与 dijkstraFind 返回的路径"长度"相等，
-//                   且首元素==start、末元素==goal
-// ============================================================
-
 #include "solver/Solver.h"
-#include <cassert>
-#include <iostream>
 
-// 辅助：检查路径首尾与连续性（相邻两步必须四方向相邻）
-// TODO: 可先只断言长度，实现完 Solver 后再补连续性检查
-static bool pathValid(const std::vector<Pos>& p, Pos s, Pos g) {
-    if (p.empty()) return false;
-    // TODO: p.front()==s && p.back()==g && 相邻步曼哈顿距离==1 && 每步都是通路
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+// 检查首尾、边界、是否穿墙，以及每一步是否相邻
+static bool pathValid(
+    const Grid& grid,
+    const std::vector<Pos>& path,
+    Pos start,
+    Pos goal
+) {
+    if (path.empty()) return false;
+    if (path.front() != start || path.back() != goal) return false;
+
+    for (std::size_t i = 0; i < path.size(); ++i) {
+        int row = path[i].first;
+        int col = path[i].second;
+
+        if (row < 0 || row >= static_cast<int>(grid.size())) {
+            return false;
+        }
+
+        if (col < 0 || col >= static_cast<int>(grid[row].size())) {
+            return false;
+        }
+
+        if (grid[row][col] == '#') return false;
+
+        if (i > 0) {
+            int distance =
+                std::abs(row - path[i - 1].first) +
+                std::abs(col - path[i - 1].second);
+
+            if (distance != 1) return false;
+        }
+    }
+
     return true;
 }
 
-// 用例1：直线通路
+// 同时检查两种算法的最短路径
+static void checkSolution(
+    const Grid& grid,
+    Pos start,
+    Pos goal,
+    std::size_t expectedCells
+) {
+    auto bfsPath = bfsFind(grid, start, goal);
+    auto dijkstraPath = dijkstraFind(grid, start, goal);
+
+    assert(bfsPath.size() == expectedCells);
+    assert(dijkstraPath.size() == expectedCells);
+
+    assert(pathValid(grid, bfsPath, start, goal));
+    assert(pathValid(grid, dijkstraPath, start, goal));
+}
+
+// 直线：5 个格子，4 步
 static void testStraightLine() {
-    // 5 行 5 列，第 2 行全通路，S=(2,0) E=(2,4)，其余是墙
-    Grid g(5, std::vector<char>(5, '#'));
-    for (int c = 0; c < 5; ++c) g[2][c] = ' ';
+    Grid grid(5, std::vector<char>(5, '#'));
 
-    auto pb = bfsFind(g, {2, 0}, {2, 4});
-    auto pd = dijkstraFind(g, {2, 0}, {2, 4});
-    // TODO: 断言 pb.size() == 5（含首尾）、pd 与 pb 等长
-    assert(!pb.empty() && pb.size() == pd.size());
-    assert(pathValid(pb, {2, 0}, {2, 4}));
-    std::cout << "[PASS] testStraightLine\n";
+    for (int col = 0; col < 5; ++col) {
+        grid[2][col] = ' ';
+    }
+
+    grid[2][0] = 'S';
+    grid[2][4] = 'E';
+
+    checkSolution(grid, {2, 0}, {2, 4}, 5);
+    std::cout << "[PASS] Straight line\n";
 }
 
-// 用例2：L 形折线
+// 折线：7 个格子，6 步
 static void testTurn() {
-    //   . . . . .
-    //   # # # # .
-    //   # # # # .   S=(0,0) E=(2,4)，唯一通路要拐弯
-    Grid g(3, std::vector<char>(5, '#'));
-    for (int c = 0; c < 5; ++c) g[0][c] = ' ';
-    for (int r = 0; r < 3; ++r) g[r][4] = ' ';
+    Grid grid(3, std::vector<char>(5, '#'));
 
-    auto pb = bfsFind(g, {0, 0}, {2, 4});
-    auto pd = dijkstraFind(g, {0, 0}, {2, 4});
-    // TODO: 断言长度一致且等于最短折线长度 7
-    assert(!pb.empty() && pb.size() == pd.size());
-    std::cout << "[PASS] testTurn\n";
+    for (int col = 0; col < 5; ++col) {
+        grid[0][col] = ' ';
+    }
+
+    for (int row = 0; row < 3; ++row) {
+        grid[row][4] = ' ';
+    }
+
+    checkSolution(grid, {0, 0}, {2, 4}, 7);
+    std::cout << "[PASS] Turn\n";
 }
 
-// 用例3：无解（被墙完全隔开）
+// 无解
 static void testNoPath() {
-    // 中间第 2 列整列是墙，S 在左 E 在右
-    Grid g(3, std::vector<char>(5, ' '));
-    for (int r = 0; r < 3; ++r) g[r][2] = '#';
+    Grid grid(3, std::vector<char>(5, ' '));
 
-    auto pb = bfsFind(g, {1, 0}, {1, 4});
-    auto pd = dijkstraFind(g, {1, 0}, {1, 4});
-    assert(pb.empty() && pd.empty());   // 都返回空 vector
-    std::cout << "[PASS] testNoPath\n";
+    for (int row = 0; row < 3; ++row) {
+        grid[row][2] = '#';
+    }
+
+    assert(bfsFind(grid, {1, 0}, {1, 4}).empty());
+    assert(dijkstraFind(grid, {1, 0}, {1, 4}).empty());
+
+    std::cout << "[PASS] No path\n";
+}
+
+// 起点和终点相同：路径只包含一个格子
+static void testSamePoint() {
+    Grid grid(3, std::vector<char>(3, ' '));
+
+    checkSolution(grid, {1, 1}, {1, 1}, 1);
+    std::cout << "[PASS] Same point\n";
+}
+
+// 空迷宫、越界坐标、起点或终点为墙
+static void testInvalidInput() {
+    Grid empty;
+    Grid grid(3, std::vector<char>(3, ' '));
+    grid[0][0] = '#';
+
+    for (auto findPath : {bfsFind, dijkstraFind}) {
+        assert(findPath(empty, {0, 0}, {0, 0}).empty());
+        assert(findPath(grid, {-1, 0}, {1, 1}).empty());
+        assert(findPath(grid, {1, 1}, {3, 0}).empty());
+        assert(findPath(grid, {0, 0}, {1, 1}).empty());
+        assert(findPath(grid, {1, 1}, {0, 0}).empty());
+    }
+
+    std::cout << "[PASS] Invalid input\n";
 }
 
 int main() {
     testStraightLine();
     testTurn();
     testNoPath();
+    testSamePoint();
+    testInvalidInput();
+
     std::cout << "ALL TESTS PASSED\n";
     return 0;
 }
