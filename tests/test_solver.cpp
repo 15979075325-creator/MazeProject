@@ -1,4 +1,5 @@
 #include "solver/Solver.h"
+#include "solver/AStar.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -41,7 +42,7 @@ static bool pathValid(
     return true;
 }
 
-// 同时检查两种算法的最短路径
+// 同时检查三种算法的最短路径（BFS / Dijkstra / A* 长度必须一致）
 static void checkSolution(
     const Grid& grid,
     Pos start,
@@ -50,12 +51,15 @@ static void checkSolution(
 ) {
     auto bfsPath = bfsFind(grid, start, goal);
     auto dijkstraPath = dijkstraFind(grid, start, goal);
+    auto aStarPath = aStarFind(grid, start, goal);
 
     assert(bfsPath.size() == expectedCells);
     assert(dijkstraPath.size() == expectedCells);
+    assert(aStarPath.size() == expectedCells);
 
     assert(pathValid(grid, bfsPath, start, goal));
     assert(pathValid(grid, dijkstraPath, start, goal));
+    assert(pathValid(grid, aStarPath, start, goal));
 }
 
 // 直线：5 个格子，4 步
@@ -99,6 +103,7 @@ static void testNoPath() {
 
     assert(bfsFind(grid, {1, 0}, {1, 4}).empty());
     assert(dijkstraFind(grid, {1, 0}, {1, 4}).empty());
+    assert(aStarFind(grid, {1, 0}, {1, 4}).empty());
 
     std::cout << "[PASS] No path\n";
 }
@@ -117,7 +122,7 @@ static void testInvalidInput() {
     Grid grid(3, std::vector<char>(3, ' '));
     grid[0][0] = '#';
 
-    for (auto findPath : {bfsFind, dijkstraFind}) {
+    for (auto findPath : {bfsFind, dijkstraFind, aStarFind}) {
         assert(findPath(empty, {0, 0}, {0, 0}).empty());
         assert(findPath(grid, {-1, 0}, {1, 1}).empty());
         assert(findPath(grid, {1, 1}, {3, 0}).empty());

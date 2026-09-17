@@ -4,6 +4,7 @@ cd /d "%~dp0"
 g++ -std=c++17 -I include ^
     tests/test_solver.cpp ^
     src/solver/Solver.cpp ^
+    src/solver/AStar.cpp ^
     -o test_solver.exe
 
 if errorlevel 1 (

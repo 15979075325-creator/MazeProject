@@ -9,7 +9,8 @@ g++ -std=c++17 ^
     src/core/FileIO.cpp ^
     src/model/Maze.cpp ^
     src/generator/DfsGenerator.cpp ^
-    src/solver/Solver.cpp
+    src/solver/Solver.cpp ^
+    src/solver/AStar.cpp
 
 if errorlevel 1 (
     echo Build failed
