@@ -1,15 +1,17 @@
 #pragma once
 
-#include <vector>
+#include "core/Common.h"
 
 class Maze {
 private:
     int height_;
     int width_;
-    std::vector<std::vector<char>> grid_;
+    Grid grid_;
 
 public:
     Maze(int height, int width);
+    explicit Maze(const Grid& grid);
+    const Grid& grid() const;
 
     int height() const;
     int width() const;

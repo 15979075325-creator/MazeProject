@@ -14,7 +14,7 @@
 
 ```text
 #########
-#S    E#
+#S     E#
 #########
 ```
 
@@ -68,6 +68,8 @@ src/model/Maze.cpp
 class Maze {
 public:
     Maze(int height, int width);
+    explicit Maze(const Grid& grid);
+    const Grid& grid() const;
 
     int height() const;
     int width() const;
@@ -85,6 +87,8 @@ public:
 要求：
 
 - 新建迷宫时，所有格子默认为 `'#'`
+- 非正尺寸、空网格或不等宽网格抛出 std::invalid_argument
+- 可导入生成器的 Grid，通过 grid() 只读接口交给求解器
 - 越界访问不能导致程序崩溃
 - `isWall()` 越界时返回 `true`
 - `cell()` 越界时返回 `'#'`
@@ -147,6 +151,7 @@ public:
 - 终点固定为 `(height - 2, width - 2)`
 - 起点和终点必须可到达
 - 宽度和高度最好为奇数
+- 实现要求宽高为不小于 3 的奇数；每次 generate() 都重新生成
 
 ## 七、求解器
 
@@ -193,6 +198,7 @@ std::vector<Pos> aStarFind(
 - 空格、`S`、`E` 可以通行
 - 找到路径时，返回从起点到终点的坐标序列
 - 找不到路径时，返回空的 `std::vector<Pos>`
+- 空网格、行宽不一致和非法起终点返回空路径
 - BFS、Dijkstra、A* 在无权迷宫中的路径长度应相同
 
 无解时：
@@ -268,7 +274,7 @@ public:
 
 ```text
 #########
-#S    E#
+#S     E#
 #########
 #########
 #########
@@ -307,6 +313,10 @@ false
 ```cpp
 true
 ```
+
+文件读写位于 include/core/FileIO.h 和 src/core/FileIO.cpp。
+读取保留空格、接受 CRLF；尺寸或字符错误时失败，传入的 grid 保持不变。
+API 已实现，主程序尚无文件操作菜单。
 
 ## 十一、文件命名规范
 
@@ -369,7 +379,10 @@ g++ -std=c++17 ^
     -o maze_app.exe ^
     src/main.cpp ^
     src/model/Maze.cpp ^
-    src/core/Utils.cpp
+    src/core/Utils.cpp ^
+    src/core/FileIO.cpp ^
+    src/generator/DfsGenerator.cpp ^
+    src/solver/Solver.cpp
 ```
 
 后续新增 `.cpp` 文件时，需要将文件路径加入编译命令。
@@ -385,13 +398,13 @@ main
 成员 A 分支：
 
 ```text
-member-a
+feature/member-a
 ```
 
 成员 B 分支：
 
 ```text
-member-b
+feature/member-b-new
 ```
 
 开发流程：

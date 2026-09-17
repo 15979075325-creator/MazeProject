@@ -10,7 +10,7 @@
 //   - 起点固定 (1,1)，终点固定 (h-2, w-2)
 //   - w、h 必须为奇数（保证墙/路间隔结构成立）
 // 生成结果只含 '#' 和 ' '，不含 'S'/'E'（由主流程标记）
-// 接口签名以 docs/interface.md §5.1 为准，不得随意改动
+// 接口签名以 docs/interface.md 的生成器章节为准
 // ============================================================
 
 #include "core/Common.h"
@@ -19,11 +19,10 @@
 class DfsGenerator {
 public:
     // 构造：w/h 为迷宫宽高（必须都是奇数，最小 3）
-    // TODO: 内部把 _grid 初始化为 h 行 w 列、全部填 '#'
+    // 内部把 _grid 初始化为 h 行 w 列、全部填 '#'
     DfsGenerator(unsigned w, unsigned h);
 
-    // 生成迷宫：启动递归挖路
-    // TODO: 调用私有 carve({1,1})，打乱方向用成员A的 rng()（可先自造随机源）
+    // 每次调用先清空旧迷宫，再从 (1,1) 挖路；使用共享 rng()
     void generate();
 
     // 取生成结果（只读引用，供求解器/渲染使用）
@@ -31,11 +30,11 @@ public:
 
     // 起点 (1,1)、终点 (h-2, w-2)
     Pos start() const { return {1, 1}; }
-    Pos goal()  const { return {_h - 2, _w - 2}; }
+    Pos goal()  const { return {static_cast<int>(_h) - 2, static_cast<int>(_w) - 2}; }
 
 private:
     // 递归核心：把 (r,c) 挖成通路，再随机挑"隔一跳"的邻居打通
-    // TODO: 1) 当前格置 ' '
+    //       1) 当前格置 ' '
     //       2) 构造四方向偏移 {(-2,0),(2,0),(0,-2),(0,2)} 并 shuffle
     //       3) 对界内且仍是墙的邻居：打通中间格 _grid[r+dr/2][c+dc/2]=' '，递归
     void carve(int r, int c);

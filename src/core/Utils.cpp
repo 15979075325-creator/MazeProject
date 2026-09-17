@@ -1,9 +1,13 @@
 #include "../../include/core/Utils.h"
 
+#include <chrono>
 #include <iostream>
 
 std::mt19937& rng() {
-    static std::mt19937 generator(std::random_device{}());
+    static std::mt19937 generator(
+        static_cast<unsigned int>(
+            std::chrono::high_resolution_clock::now()
+                .time_since_epoch().count()) ^ std::random_device{}());
     return generator;
 }
 

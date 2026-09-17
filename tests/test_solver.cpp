@@ -123,6 +123,9 @@ static void testInvalidInput() {
         assert(findPath(grid, {1, 1}, {3, 0}).empty());
         assert(findPath(grid, {0, 0}, {1, 1}).empty());
         assert(findPath(grid, {1, 1}, {0, 0}).empty());
+        assert(findPath(Grid{{}}, {0, 0}, {0, 0}).empty());
+        assert(findPath(Grid{{' ', ' '}, {' '}}, {0, 0}, {0, 1}).empty());
+        assert(findPath(Grid{{' '}, {' ', ' '}}, {0, 0}, {1, 0}).empty());
     }
 
     std::cout << "[PASS] Invalid input\n";

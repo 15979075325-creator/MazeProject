@@ -25,6 +25,14 @@
 #include <vector>
 
 // 公共辅助函数
+static bool validGrid(const Grid& grid) {
+    if (grid.empty() || grid.front().empty()) return false;
+    for (const auto& row : grid) {
+        if (row.size() != grid.front().size()) return false;
+    }
+    return true;
+}
+
 static bool inBounds(int r, int c, const Grid& g) {//判断坐标是否存在
 
     if (g.empty()) return false;
@@ -45,7 +53,7 @@ static const int DC[4] = {0, 0, -1, 1};
 // BFS 求最短路径
 std::vector<Pos> bfsFind(const Grid& grid, Pos start, Pos goal) {
     // 1. 合法性检查：起点/终点越界或是墙 → 返回空
-    if (grid.empty() || !isOpen(grid, start.first, start.second)
+    if (!validGrid(grid) || !isOpen(grid, start.first, start.second)
                     || !isOpen(grid, goal.first, goal.second)) {
         return {};
     }
@@ -97,7 +105,7 @@ std::vector<Pos> bfsFind(const Grid& grid, Pos start, Pos goal) {
 // Dijkstra 求最短路径（网格所有边权均为 1，结果与 BFS 一致）
 std::vector<Pos> dijkstraFind(const Grid& grid, Pos start, Pos goal) {
     // 1. 合法性检查同上
-    if (grid.empty() || !isOpen(grid, start.first, start.second)
+    if (!validGrid(grid) || !isOpen(grid, start.first, start.second)
                     || !isOpen(grid, goal.first, goal.second)) {
         return {};
     }

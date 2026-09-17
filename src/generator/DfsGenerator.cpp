@@ -9,22 +9,23 @@
 //        - 若隔一跳的目标格在界内且仍是墙：
 //            打通中间格（置 ' '）→ 递归 carve 目标格
 //   3. generate()：从 (1,1) 启动 carve
-// 提示：shuffle 需要随机数引擎；第2周成员A的 Utils::rng() 可能还没合并，
-//       可先用局部 static std::mt19937{std::random_device{}()} 顶上，
-//       联调时再换成 rng()（同种子可复现）
+// shuffle 使用共享 rng()；setSeed() 可复现结果。
 // ============================================================
 
 #include "generator/DfsGenerator.h"
 #include "core/Utils.h"
 
 #include <algorithm>
+#include <limits>
 #include <stdexcept>
 #include <vector>
 // 构造函数
 DfsGenerator::DfsGenerator(unsigned w, unsigned h)
     : _grid(), _w(w), _h(h) {
     // 1. 参数校验：w、h 必须是 >= 3 的奇数
-    if (w < 3 || h < 3 || w % 2 == 0 || h % 2 == 0) {
+    if (w < 3 || h < 3 || w % 2 == 0 || h % 2 == 0 ||
+        w > static_cast<unsigned>(std::numeric_limits<int>::max()) ||
+        h > static_cast<unsigned>(std::numeric_limits<int>::max())) {
         throw std::invalid_argument("DfsGenerator: w/h 必须是不小于 3 的奇数");
     }
     // 2. 初始化为 h 行 w 列、全部填 '#'
@@ -59,5 +60,6 @@ void DfsGenerator::carve(int r, int c) {
 
 // 生成迷宫
 void DfsGenerator::generate() {
+    _grid.assign(_h, std::vector<char>(_w, '#'));
     carve(1, 1);
 }
