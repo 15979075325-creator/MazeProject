@@ -1,43 +1,29 @@
 #include <iostream>
 #include <vector>
 
-#include "../include/core/Utils.h"
-#include "../include/model/Maze.h"
+#include "core/Utils.h"
+#include "generator/DfsGenerator.h"
+#include "solver/Solver.h"
 
 int main() {
-    {
-        ScopedTimer timer("Maze test");
+    ScopedTimer timer("Generate and solve maze");
 
-        Maze maze(9, 9);
+    DfsGenerator generator(21, 21);
+    generator.generate();
 
-        maze.setCell(1, 1, 'S');
+    const Grid& grid = generator.grid();
+    Pos start = generator.start();
+    Pos goal = generator.goal();
 
-        for (int col = 2; col <= 7; col++) {
-            maze.setCell(1, col, ' ');
-        }
+    std::vector<Pos> path = bfsFind(grid, start, goal);
 
-        maze.setCell(1, 7, 'E');
-
-        std::cout << "Maze:\n";
-        maze.print();
-
-        std::cout << "\nPath test:\n";
-
-        Grid grid(5, std::vector<char>(5, '#'));
-
-        std::vector<Pos> path = {
-            {1, 1},
-            {1, 2},
-            {1, 3}
-        };
-
-        printMaze(
-            grid,
-            path,
-            {1, 1},
-            {1, 3}
-        );
+    if (path.empty()) {
+        std::cout << "No path found.\n";
+        return 1;
     }
+
+    std::cout << "Path length: " << path.size() - 1 << "\n\n";
+    printMaze(grid, path, start, goal);
 
     return 0;
 }
