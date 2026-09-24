@@ -1,5 +1,7 @@
 # MazeProject
 
+[![C++ Build and Tests](https://github.com/15979075325-creator/MazeProject/actions/workflows/tests.yml/badge.svg)](https://github.com/15979075325-creator/MazeProject/actions/workflows/tests.yml)
+
 基于 C++17 的命令行迷宫生成、编辑、求解与可视化项目。
 
 ## 环境与运行
@@ -9,6 +11,7 @@ Windows 需要安装 `g++`，并确保可从 `PATH` 调用。
 - 双击 `build.bat`：编译并运行主程序。
 - 双击 `test.bat`：编译并运行全部自动测试。
 - 测试失败时，脚本返回非零退出码。
+- GitHub Actions 会在 main、A、B 分支推送时自动编译并测试。
 
 | 字符 | 含义 |
 |---|---|

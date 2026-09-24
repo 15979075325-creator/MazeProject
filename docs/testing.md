@@ -2,6 +2,13 @@
 
 ## 一、自动测试
 
+GitHub 上的 `.github/workflows/tests.yml` 会在以下情况自动运行：
+
+- 向 `main`、`feature/member-a` 或 `feature/member-b` 推送代码。
+- 创建或更新目标为 `main` 的 Pull Request。
+
+工作流会在 Linux 环境编译主程序，并运行求解器测试和项目测试。仓库首页徽章显示当前测试状态。
+
 Windows 双击项目根目录的 `test.bat`。成功时应依次看到：
 
 ```text
