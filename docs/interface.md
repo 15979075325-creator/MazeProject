@@ -94,7 +94,9 @@ public:
 - `cell()` 越界时返回 `'#'`
 - `setCell()` 越界时不进行修改
 
-## 五、起点和终点
+## 五、起点和终点（Start / End）
+
+界面和用户文档统一使用 `End` 表示终点，与字符 `E` 对应。部分底层求解器接口保留参数名 `goal`，其含义同样是终点。
 
 默认起点：
 
@@ -105,7 +107,7 @@ Pos start{1, 1};
 默认终点：
 
 ```cpp
-Pos goal{height - 2, width - 2};
+Pos end{height - 2, width - 2};
 ```
 
 迷宫的高度和宽度最好使用奇数，例如：
@@ -150,8 +152,9 @@ public:
 - 起点固定为 `(1, 1)`
 - 终点固定为 `(height - 2, width - 2)`
 - 起点和终点必须可到达
-- 宽度和高度最好为奇数
-- 实现要求宽高为不小于 3 的奇数；每次 generate() 都重新生成
+- 实现要求宽高为 3～51 的奇数；每次 `generate()` 都重新生成
+- 主程序支持固定随机种子；相同尺寸与种子生成相同迷宫
+- 主程序中种子 `0` 表示自动选择随机种子，并显示实际使用值
 
 ## 七、求解器
 
@@ -316,7 +319,7 @@ true
 
 文件读写位于 include/core/FileIO.h 和 src/core/FileIO.cpp。
 读取保留空格、接受 CRLF；尺寸或字符错误时失败，传入的 grid 保持不变。
-API 已实现，主程序选项 3 保存、4 读取。菜单读取要求恰好一个 S 和一个 E，
+API 已实现，主程序选项 8 保存、9 读取。菜单读取要求恰好一个 S 和一个 E，
 读取失败保留当前迷宫，成功后移除旧路径标记并更新起终点。
 
 ## 十一、文件命名规范
@@ -355,7 +358,7 @@ findPath
 ```cpp
 grid
 startPos
-goalPos
+endPos
 ```
 
 ## 十二、编译要求
@@ -366,11 +369,7 @@ Windows 使用：
 build.bat
 ```
 
-Linux 或 macOS 使用：
-
-```text
-build.sh
-```
+仓库当前提供 Windows 批处理脚本。Linux 或 macOS 可在终端执行等价的 `g++` 命令，项目暂未提供 `build.sh`。
 
 Windows 编译命令：
 
@@ -383,7 +382,8 @@ g++ -std=c++17 ^
     src/core/Utils.cpp ^
     src/core/FileIO.cpp ^
     src/generator/DfsGenerator.cpp ^
-    src/solver/Solver.cpp
+    src/solver/Solver.cpp ^
+    src/solver/AStar.cpp
 ```
 
 后续新增 `.cpp` 文件时，需要将文件路径加入编译命令。
@@ -405,7 +405,7 @@ feature/member-a
 成员 B 分支：
 
 ```text
-feature/member-b-new
+feature/member-b
 ```
 
 开发流程：
@@ -421,3 +421,38 @@ feature/member-b-new
         ↓
 合并到 main
 ```
+
+## 十四、主程序交互约定
+
+主菜单按功能分组：
+
+```text
+迷宫设置：1 生成，2 坐标编辑，3 设置起点和终点，10 键盘编辑
+寻路功能：4 BFS，5 Dijkstra，6 A*，7 三算法比较，11 路径动画
+文件功能：8 保存，9 读取
+0 退出
+```
+
+生成输入格式：
+
+```text
+rows cols seed
+```
+
+- `rows`、`cols` 必须是 3～51 的奇数。
+- `seed` 范围是 0～4294967295；0 表示随机。
+- 相同尺寸与非零种子必须生成相同迷宫。
+
+键盘编辑约定：
+
+- `W/A/S/D` 或方向键移动 `@` 光标。
+- 空格切换墙和通路。
+- `Q` 返回主菜单。
+- 不允许把 `S` 或 `E` 改成墙。
+- 实际修改后清除旧路径。
+
+路径动画约定：
+
+- 必须先由 BFS、Dijkstra 或 A* 得到路径。
+- 动画按从 `S` 到 `E` 的顺序逐格显示 `.`。
+- 当前播放间隔约为 40 毫秒。
