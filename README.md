@@ -90,6 +90,7 @@ include/core/       公共类型、工具和文件读写接口
 include/model/      Maze 数据模型
 include/generator/  DFS 迷宫生成器
 include/solver/     BFS、Dijkstra、A* 求解器
+include/ui/         控制台界面接口
 src/                对应实现和主程序
 tests/              自动测试与独立演示
 docs/               接口、算法和测试文档

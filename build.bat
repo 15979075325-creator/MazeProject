@@ -10,7 +10,8 @@ g++ -std=c++17 ^
     src/model/Maze.cpp ^
     src/generator/DfsGenerator.cpp ^
     src/solver/Solver.cpp ^
-    src/solver/AStar.cpp
+    src/solver/AStar.cpp ^
+    src/ui/ConsoleUI.cpp
 
 if errorlevel 1 (
     echo Build failed

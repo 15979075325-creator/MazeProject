@@ -383,7 +383,8 @@ g++ -std=c++17 ^
     src/core/FileIO.cpp ^
     src/generator/DfsGenerator.cpp ^
     src/solver/Solver.cpp ^
-    src/solver/AStar.cpp
+    src/solver/AStar.cpp ^
+    src/ui/ConsoleUI.cpp
 ```
 
 后续新增 `.cpp` 文件时，需要将文件路径加入编译命令。
@@ -423,6 +424,15 @@ feature/member-b
 ```
 
 ## 十四、主程序交互约定
+
+控制台界面代码位于：
+
+```text
+include/ui/ConsoleUI.h
+src/ui/ConsoleUI.cpp
+```
+
+`main.cpp` 负责菜单和功能调度；清屏、键盘编辑和路径动画由 `ConsoleUI` 模块负责。
 
 主菜单按功能分组：
 
