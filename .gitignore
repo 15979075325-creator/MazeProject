@@ -1,0 +1,22 @@
+# Compiled binaries and object files
+*.exe
+*.out
+*.o
+*.obj
+
+# Generated build directories and CMake files
+/build/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+
+# Personal maze saves
+/saved_mazes/
+
+# Editor and operating-system files
+/.vscode/
+/.idea/
+*.swp
+.DS_Store
+Thumbs.db
