@@ -9,6 +9,7 @@
 Windows 需要安装 `g++`，并确保可从 `PATH` 调用。
 
 - 双击 `build.bat`：编译并运行主程序。
+- 双击 `build_gui.bat`：编译并运行 Windows 图形版。
 - 双击 `test.bat`：编译并运行全部自动测试。
 - 测试失败时，脚本返回非零退出码。
 - GitHub Actions 会在 main、A、B 分支推送时自动编译并测试。
@@ -99,6 +100,20 @@ docs/               接口、算法和测试文档
 ```
 
 `tests/demo_b.cpp` 是独立示例，不能与 `src/main.cpp` 一起编译。
+
+## Windows 图形版
+
+图形版使用 Windows 自带的 Win32/GDI，不需要安装额外图形库，也不使用 CMake。
+
+- `New maze`：按照 `Rows`、`Cols`、`Seed` 生成迷宫。
+- `BFS`、`Dijkstra`、`A*`：求解并逐格播放黄色路径。
+- `Compare`：比较三种算法的路径长度和运行时间。
+- `Wall / road`：点击格子切换墙和道路。
+- `Set start`、`Set end`：点击道路移动起点或终点。
+- `Clear path`：停止动画并清除当前路径。
+- `Save`、`Load`：通过文件选择窗口保存或读取迷宫。
+
+图形版采用双缓冲绘制，减少路径动画和窗口重绘时的闪烁。命令行版与图形版相互独立，可以同时保留。
 
 详细接口见 `docs/interface.md`，测试步骤见 `docs/testing.md`。
 
