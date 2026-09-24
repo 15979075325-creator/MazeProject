@@ -102,6 +102,8 @@ docs/               接口、算法和测试文档
 
 详细接口见 `docs/interface.md`，测试步骤见 `docs/testing.md`。
 
+稳定版本说明见 `docs/releases/v1.0.md`。
+
 ## 分支
 
 - `main`：稳定主分支。
