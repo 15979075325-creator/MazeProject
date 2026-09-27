@@ -83,6 +83,6 @@ All tests succeeded
 2. BFS、Dijkstra、A* 均能播放黄色路径动画，动画期间无明显闪烁。
 3. `Compare` 显示三种算法等长的路径和各自耗时。
 4. 三种鼠标编辑模式能切换墙/道路并移动起点和终点，编辑后旧路径清除。
-5. `Save` 后更换迷宫，再用 `Load` 能恢复迷宫及起终点。
+5. `Save` 和 `Load` 默认打开程序旁的 `saved_mazes/`；保存后更换迷宫，再读取能恢复迷宫及起终点。
 6. 改变窗口大小后迷宫仍居中显示，按钮和输入框可正常操作。
 - `main`、`feature/member-a`、`feature/member-b` 合并后指向同一已验证提交。

@@ -125,7 +125,30 @@ void generateMazeFromInputs(HWND window) {
     generateMaze(rows, cols, seed);
 }
 
+std::string ensureSaveDirectory() {
+    char executablePath[MAX_PATH] = {};
+    const DWORD length = GetModuleFileNameA(nullptr, executablePath, MAX_PATH);
+    if (length == 0 || length >= MAX_PATH) {
+        return {};
+    }
+
+    std::string directory(executablePath, length);
+    const std::size_t separator = directory.find_last_of("\\/");
+    if (separator == std::string::npos) {
+        return {};
+    }
+
+    directory.resize(separator);
+    directory += "\\saved_mazes";
+    if (!CreateDirectoryA(directory.c_str(), nullptr) &&
+        GetLastError() != ERROR_ALREADY_EXISTS) {
+        return {};
+    }
+    return directory;
+}
+
 std::string chooseSaveFile(HWND window) {
+    const std::string saveDirectory = ensureSaveDirectory();
     char filename[MAX_PATH] = "maze.txt";
     OPENFILENAMEA dialog{};
     dialog.lStructSize = sizeof(dialog);
@@ -134,12 +157,14 @@ std::string chooseSaveFile(HWND window) {
         "Maze files (*.maze;*.txt)\0*.maze;*.txt\0All files (*.*)\0*.*\0";
     dialog.lpstrFile = filename;
     dialog.nMaxFile = MAX_PATH;
+    dialog.lpstrInitialDir = saveDirectory.empty() ? nullptr : saveDirectory.c_str();
     dialog.lpstrDefExt = "txt";
     dialog.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
     return GetSaveFileNameA(&dialog) ? std::string(filename) : std::string();
 }
 
 std::string chooseOpenFile(HWND window) {
+    const std::string saveDirectory = ensureSaveDirectory();
     char filename[MAX_PATH] = {};
     OPENFILENAMEA dialog{};
     dialog.lStructSize = sizeof(dialog);
@@ -148,6 +173,7 @@ std::string chooseOpenFile(HWND window) {
         "Maze files (*.maze;*.txt)\0*.maze;*.txt\0All files (*.*)\0*.*\0";
     dialog.lpstrFile = filename;
     dialog.nMaxFile = MAX_PATH;
+    dialog.lpstrInitialDir = saveDirectory.empty() ? nullptr : saveDirectory.c_str();
     dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
     return GetOpenFileNameA(&dialog) ? std::string(filename) : std::string();
 }
