@@ -30,6 +30,7 @@ constexpr int kSetEndButton = 1008;
 constexpr int kSaveButton = 1009;
 constexpr int kLoadButton = 1010;
 constexpr int kCompareButton = 1011;
+constexpr int kAppIconResource = 101;
 constexpr int kRowsInput = 1101;
 constexpr int kColsInput = 1102;
 constexpr int kSeedInput = 1103;
@@ -584,14 +585,19 @@ LRESULT CALLBACK windowProc(HWND window, UINT message, WPARAM wParam, LPARAM lPa
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int showCommand) {
     const wchar_t className[] = L"MazeProjectWindow";
 
-    WNDCLASSW windowClass{};
+    WNDCLASSEXW windowClass{};
+    windowClass.cbSize = sizeof(windowClass);
     windowClass.lpfnWndProc = windowProc;
     windowClass.hInstance = instance;
     windowClass.lpszClassName = className;
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    windowClass.hIcon = static_cast<HICON>(LoadImageW(
+        instance, MAKEINTRESOURCEW(kAppIconResource), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR));
+    windowClass.hIconSm = static_cast<HICON>(LoadImageW(
+        instance, MAKEINTRESOURCEW(kAppIconResource), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
 
-    if (!RegisterClassW(&windowClass)) {
+    if (!RegisterClassExW(&windowClass)) {
         MessageBoxW(nullptr, L"Could not register the window class.",
                     L"MazeProject", MB_OK | MB_ICONERROR);
         return 1;
