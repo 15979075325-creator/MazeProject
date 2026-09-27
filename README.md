@@ -115,6 +115,8 @@ docs/               接口、算法和测试文档
 
 图形版采用双缓冲绘制，减少路径动画和窗口重绘时的闪烁。命令行版与图形版相互独立，可以同时保留。
 
+程序图标资源位于 `assets/maze_icon.png` 和 `assets/maze_icon.ico`。`build_gui.bat` 会先用 `windres` 编译图标资源，再将其链接到 `maze_gui.exe`。
+
 详细接口见 `docs/interface.md`，测试步骤见 `docs/testing.md`。
 
 稳定版本说明见 `docs/releases/v1.0.md`。
